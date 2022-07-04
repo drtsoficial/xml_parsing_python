@@ -1,6 +1,7 @@
 # Import required modules 
 import csv
-import requests
+from dataclasses import fields
+import pip._vendor.requests as requests
 import xml.etree.ElementTree as ET
 
 def loadRSS():
@@ -46,3 +47,35 @@ def parseXML(xmlfile):
 
     # Return news items list
     return newsitems
+
+def savetoCSV(newsitems, filename):
+
+    # Specific the filds for the csv file
+    fields = ['guid', 'title', 'link', 'pubDate', 'description', 'media']
+
+    # Writing to csv file
+    with open(filename, 'w') as csvfile:
+
+        # Create a csv writer object
+        csvwriter = csv.DictWriter(csvfile, fieldnames=fields)
+
+         # Write headers (field names)
+        csvwriter.writeheader()
+
+        # Write data rows (field values)
+        csvwriter.writerows(newsitems)
+
+def main():
+
+    # Load RSS from web to update the xml file
+    loadRSS()
+
+    # Parse the xml file
+    newsitems = parseXML('topnewsfeed.xml')
+
+    # Store news items in a csv file
+    savetoCSV(newsitems, 'topnews.csv')
+
+if __name__ == "__main__":
+    # Calling main function
+    main()
